@@ -14,7 +14,7 @@ app.use(express.json({ limit: '10mb' }));
 // MongoDB Connection
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://gadzooksoffside:imoogi..7F$@cluster0.3igmlag.mongodb.net/', {
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://gadzooksoffside:imoogi..7F$@cluster0.3igmlag.mongodb.net/gadzooks', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -608,3 +608,4 @@ app.listen(PORT, () => {
   console.log('   - Admin verification dashboard');
 
 });
+

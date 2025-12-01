@@ -14,7 +14,7 @@ app.use(express.json({ limit: '10mb' }));
 // MongoDB Connection
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/gadzooks', {
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://gadzooksoffside:imoogi..7F$@cluster0.3igmlag.mongodb.net/', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
@@ -606,4 +606,5 @@ app.listen(PORT, () => {
   console.log('   - 15-minute reservation system');
   console.log('   - UPI & Bank Transfer support');
   console.log('   - Admin verification dashboard');
+
 });

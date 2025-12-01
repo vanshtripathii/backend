@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // MongoDB connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/gadzooks';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://gadzooksoffside:imoogi..7F$@cluster0.3igmlag.mongodb.net/gadzooks';
 const ADMIN_KEY = process.env.ADMIN_KEY || 'gadzooksoffsidebyvanshandritham';
 
 // Connect to MongoDB
@@ -385,4 +385,5 @@ app.listen(PORT, () => {
     console.log(`🔑 Admin key: ${ADMIN_KEY}`);
     console.log(`🗄️  MongoDB: ${MONGODB_URI}`);
     console.log('📧 Email service status: ' + (emailService ? 'Loaded' : 'Not loaded'));
+
 });

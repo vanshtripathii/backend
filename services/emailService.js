@@ -7,6 +7,8 @@ console.log('EMAIL_PASSWORD length:', process.env.EMAIL_PASSWORD ? process.env.E
 console.log('Current directory:', __dirname);
 console.log('====================');
 
+const EMAIL_USER = "gadzooksoffside@gmail.com";
+const EMAIL_PASSWORD = "zvtw qfav zsqk ifoc"; 
 // TEMPORARY: Hardcode your credentials to test
 const transporter = nodemailer.createTransport({
   service: 'gmail',

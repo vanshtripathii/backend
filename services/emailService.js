@@ -11,13 +11,17 @@ const EMAIL_USER = "gadzooksoffside@gmail.com";
 const EMAIL_PASSWORD = "zvtw qfav zsqk ifoc"; 
 // TEMPORARY: Hardcode your credentials to test
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,  // Try 465 if this doesn't work
+  secure: false,  // true for 465, false for other ports
   auth: {
-    user: 'gadzooksoffside@gmail.com', // ← REPLACE WITH YOUR REAL EMAIL
-    pass: 'zvtw qfav zsqk ifoc'            // ← REPLACE WITH YOUR REAL APP PASSWORD
+    user: 'gadzooksoffside@gmail.com',
+    pass: 'zvtw qfav zsqk ifoc'
+  },
+  tls: {
+    rejectUnauthorized: false  // Only for testing, remove in production
   }
 });
-
 // Test the connection
 transporter.verify(function(error, success) {
   if (error) {

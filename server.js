@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const app = express();
 
+app.set('trust proxy', 1);
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
@@ -608,4 +609,5 @@ app.listen(PORT, () => {
   console.log('   - Admin verification dashboard');
 
 });
+
 

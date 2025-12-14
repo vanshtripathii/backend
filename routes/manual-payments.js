@@ -4,6 +4,81 @@ const Product = require('../models/Product');
 const Payment = require('../models/Payment');
 const { auth, adminAuth } = require('../middleware/auth');
 
+// Check product access (availability) for Buy Now flow
+router.get('/check-access/:productId', auth, async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const userId = req.user.id;
+
+    let product;
+    if (productId && productId.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(productId);
+      if (!product) product = await Product.findOne({ productId: productId });
+    } else {
+      product = await Product.findOne({ productId: productId });
+    }
+
+    if (!product) {
+      return res.status(404).json({ success: false, canAccess: false, message: 'Product not found' });
+    }
+
+    // Refresh expired reservation
+    const now = new Date();
+    if (product.inventoryStatus === 'reserved' && product.reservedUntil && product.reservedUntil <= now) {
+      const prodIdStr = product._id ? product._id.toString() : '';
+      const updateQuery = prodIdStr.match(/^[0-9a-fA-F]{24}$/) ? { _id: product._id } : { productId: product.productId || productId };
+      await Product.updateOne(updateQuery, { $set: { inventoryStatus: 'available', reservedUntil: null, reservationId: null, reservedBy: null } });
+      product = await Product.findOne(updateQuery);
+    }
+
+    if (product.inventoryStatus === 'sold') {
+      return res.json({ success: true, canAccess: false, status: 'sold', message: 'Product is sold' });
+    }
+
+    if (product.inventoryStatus === 'reserved' && product.reservedUntil && product.reservedUntil > now) {
+      const isReservedByCurrentUser = product.reservedBy && product.reservedBy.toString() === userId.toString();
+      if (isReservedByCurrentUser) {
+        return res.json({ success: true, canAccess: true, status: 'reserved_by_me', message: 'Reserved by you', reservedUntil: product.reservedUntil });
+      }
+      return res.json({ success: true, canAccess: false, status: 'reserved', message: 'Product reserved by another user', reservedUntil: product.reservedUntil });
+    }
+
+    // Available
+    return res.json({ success: true, canAccess: true, status: 'available', message: 'Product is available' });
+  } catch (error) {
+    console.error('Check access error:', error);
+    return res.status(500).json({ success: false, canAccess: false, message: 'Server error' });
+  }
+});
+
+// Get payment status by product for current user
+router.get('/status-by-product/:productId', auth, async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const userId = req.user.id;
+
+    // Try to find Payment by productId (ObjectId) or by productIdString
+    let payment = null;
+    if (productId && productId.match(/^[0-9a-fA-F]{24}$/)) {
+      payment = await Payment.findOne({ productId: productId, userId: userId });
+    }
+
+    if (!payment) {
+      // try by productIdString field
+      payment = await Payment.findOne({ productIdString: productId, userId: userId });
+    }
+
+    if (!payment) {
+      return res.status(404).json({ success: false, message: 'No payment found for this product' });
+    }
+
+    return res.json({ success: true, payment });
+  } catch (error) {
+    console.error('Status by product error:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 // Reserve product for 15 minutes
 // In your manual-payments.js - FIX THE RESERVE ENDPOINT
 router.post('/reserve', auth, async (req, res) => {
@@ -773,16 +848,16 @@ router.get('/my-payments', auth, async (req, res) => {
 function getNextSteps(paymentMethod) {
   const steps = {
     upi: [
-      'Make payment to our UPI ID: vanshtripathi1802-4@okicici',
+      'Make payment to our UPI ID: your-business@upi',
       'Enter the transaction ID in the form',
       'Our team will verify within 1-2 hours',
       'You will receive confirmation email'
     ],
     bank_transfer: [
       'Transfer amount to our bank account',
-      'Account: VANSH TRIPATHI',
-      'Account No: 0498 0152 1885',
-      'IFSC: ICIC0000498',
+      'Account: YOUR_BUSINESS_NAME',
+      'Account No: XXXX XXXX XXXX',
+      'IFSC: XXXXXXXXXXX',
       'Enter reference number in the form',
       'Our team will verify within 2-4 hours'
     ]

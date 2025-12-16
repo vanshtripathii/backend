@@ -848,16 +848,16 @@ router.get('/my-payments', auth, async (req, res) => {
 function getNextSteps(paymentMethod) {
   const steps = {
     upi: [
-      'Make payment to our UPI ID: your-business@upi',
+      'Make payment to our UPI ID: vanshtripathi1802-4@okicici',
       'Enter the transaction ID in the form',
       'Our team will verify within 1-2 hours',
       'You will receive confirmation email'
     ],
     bank_transfer: [
       'Transfer amount to our bank account',
-      'Account: YOUR_BUSINESS_NAME',
-      'Account No: XXXX XXXX XXXX',
-      'IFSC: XXXXXXXXXXX',
+      'Account: VANSH TRIPATHI',
+      'Account No: 0498 0152 1885',
+      'IFSC: ICIC0000498',
       'Enter reference number in the form',
       'Our team will verify within 2-4 hours'
     ]

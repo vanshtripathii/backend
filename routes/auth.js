@@ -54,28 +54,39 @@ router.post('/register', async (req, res) => {
     await user.save();
 
 // Auto-create cart
-try {
-  const cart = new Cart({
-    userId: user._id,
-    items: [],
-    subtotal: 0,
-    shipping: 0,
-    tax: 0,
-    total: 0
-  });
-  
-  // Validate the cart before saving
-  await cart.validate();
-  await cart.save();
-  console.log(`Cart created for new user: ${user._id}`);
-  
-} catch (err) {
-  console.error("Cart creation failed:", err);
-  // Don't fail registration if cart creation fails
-  if (err.name === 'ValidationError') {
-    console.log('Cart validation error details:', err.errors);
-  }
-}
+// Auto-create cart
+    try {
+      const cart = new Cart({
+        userId: user._id,
+        items: [],
+        subtotal: 0,
+        shipping: 0,
+        tax: 0,
+        total: 0
+      });
+      // Validate the cart before saving
+      await cart.validate();
+      await cart.save();
+      console.log(`Cart created for new user: ${user._id}`);
+    } catch (err) {
+      console.error("Cart creation failed:", err);
+      // Don't fail registration if cart creation fails
+      if (err.name === 'ValidationError') {
+        console.log('Cart validation error details:', err.errors);
+      }
+    }
+
+    // Generate token and respond
+    const token = generateToken(user._id);
+    return res.status(201).json({
+      message: 'Registration successful',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
+    });
 
   } catch (error) {
     console.error("Registration Error:", error);

@@ -8,6 +8,16 @@ const { auth, adminAuth } = require('../middleware/auth');
 router.get('/check-access/:productId', async (req, res) => {
   try {
     const { productId } = req.params;
+      if (req.headers && req.headers.authorization) {
+      try {
+        await new Promise((resolve, reject) => {
+          auth(req, res, (err) => err ? reject(err) : resolve());
+        });
+      } catch (e) {
+        // Invalid token - treat as anonymous and continue
+        console.warn('check-access: auth failed or token invalid', e && e.message ? e.message : e);
+      }
+    }
      const userId = req.user && req.user.id ? req.user.id : null;
 
     let product;

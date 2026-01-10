@@ -50,7 +50,43 @@ router.get('/check-access/:productId', auth, async (req, res) => {
     return res.status(500).json({ success: false, canAccess: false, message: 'Server error' });
   }
 });
+// Public endpoint: merchant payment details (UPI ID, bank details)
+router.get('/merchant-details', async (req, res) => {
+  try {
+    // Prefer environment variables, fallback to safe defaults
+    const upiId = process.env.MERCHANT_UPI_ID || process.env.UPI_ID || 'vanshtripathi1802-4@okicici';
+    const bankDetails = {
+      accountName: process.env.MERCHANT_ACCOUNT_NAME || 'VANSH TRIPATHI',
+      accountNumber: process.env.MERCHANT_ACCOUNT_NUMBER || '0498 0152 1885',
+      ifsc: process.env.MERCHANT_IFSC || 'ICIC0000498',
+      bankName: process.env.MERCHANT_BANK_NAME || 'ICICI BANK'
+    };
+const steps = {
+    upi: [
+      `Make payment to our UPI ID: ${upi}`,
+      'Enter the transaction ID in the form',
+      'Our team will verify within 1-2 hours',
+      'You will receive confirmation email'
+    ],
+    bank_transfer: [
+      'Transfer amount to our bank account',
+      `Account: ${bank.accountName}`,
+      `Account No: ${bank.accountNumber}`,
+      `IFSC: ${bank.ifsc}`,
+      'Enter reference number in the form',
+      'Our team will verify within 2-4 hours'
+    ]
+  };
 
+  return steps[paymentMethod] || [];
+}
+
+    res.json({ success: true, upiId, bankDetails });
+  } catch (err) {
+    console.error('Merchant details error:', err);
+    res.status(500).json({ success: false, message: 'Failed to load merchant details' });
+  }
+});
 // Get payment status by product for current user
 router.get('/status-by-product/:productId', auth, async (req, res) => {
   try {

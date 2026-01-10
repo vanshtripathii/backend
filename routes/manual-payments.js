@@ -63,7 +63,7 @@ router.get('/merchant-details', async (req, res) => {
     };
 const steps = {
     upi: [
-      `Make payment to our UPI ID: ${upi}`,
+      'Make payment to our UPI ID: ${upi}',
       'Enter the transaction ID in the form',
       'Our team will verify within 1-2 hours',
       'You will receive confirmation email'

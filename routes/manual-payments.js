@@ -70,9 +70,9 @@ const steps = {
     ],
     bank_transfer: [
       'Transfer amount to our bank account',
-      `Account: ${bank.accountName}`,
-      `Account No: ${bank.accountNumber}`,
-      `IFSC: ${bank.ifsc}`,
+      'Account: ${bank.accountName}',
+      'Account No: ${bank.accountNumber}',
+      'IFSC: ${bank.ifsc}',
       'Enter reference number in the form',
       'Our team will verify within 2-4 hours'
     ]

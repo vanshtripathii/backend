@@ -61,32 +61,13 @@ router.get('/merchant-details', async (req, res) => {
       ifsc: process.env.MERCHANT_IFSC || 'ICIC0000498',
       bankName: process.env.MERCHANT_BANK_NAME || 'ICICI BANK'
     };
-const steps = {
-    upi: [
-      'Make payment to our UPI ID: ${upi}',
-      'Enter the transaction ID in the form',
-      'Our team will verify within 1-2 hours',
-      'You will receive confirmation email'
-    ],
-    bank_transfer: [
-      'Transfer amount to our bank account',
-      'Account: ${bank.accountName}',
-      'Account No: ${bank.accountNumber}',
-      'IFSC: ${bank.ifsc}',
-      'Enter reference number in the form',
-      'Our team will verify within 2-4 hours'
-    ]
-  };
-
-  return steps[paymentMethod] || [];
-}
-
-    res.json({ success: true, upiId, bankDetails });
+        res.json({ success: true, upiId, bankDetails });
   } catch (err) {
     console.error('Merchant details error:', err);
     res.status(500).json({ success: false, message: 'Failed to load merchant details' });
   }
 });
+
 // Get payment status by product for current user
 router.get('/status-by-product/:productId', auth, async (req, res) => {
   try {
@@ -882,18 +863,23 @@ router.get('/my-payments', auth, async (req, res) => {
 
 // Helper function for next steps based on payment method
 function getNextSteps(paymentMethod) {
+    const upi = process.env.MERCHANT_UPI_ID || process.env.UPI_ID || 'vanshtripathi1802-4@okicici';
+  const bank = {
+    accountName: process.env.MERCHANT_ACCOUNT_NAME || 'VANSH TRIPATHI',
+    accountNumber: process.env.MERCHANT_ACCOUNT_NUMBER || '0498 0152 1885',
+    ifsc: process.env.MERCHANT_IFSC || 'ICIC0000498'
+  };
   const steps = {
     upi: [
-      'Make payment to our UPI ID: vanshtripathi1802-4@okicici',
+       `Make payment to our UPI ID: ${upi}`,,
       'Enter the transaction ID in the form',
       'Our team will verify within 1-2 hours',
       'You will receive confirmation email'
     ],
     bank_transfer: [
-      'Transfer amount to our bank account',
-      'Account: VANSH TRIPATHI',
-      'Account No: 0498 0152 1885',
-      'IFSC: ICIC0000498',
+     `Account: ${bank.accountName}`,
+      `Account No: ${bank.accountNumber}`,
+      `IFSC: ${bank.ifsc}`,
       'Enter reference number in the form',
       'Our team will verify within 2-4 hours'
     ]

@@ -5,10 +5,10 @@ const Payment = require('../models/Payment');
 const { auth, adminAuth } = require('../middleware/auth');
 
 // Check product access (availability) for Buy Now flow
-router.get('/check-access/:productId', auth, async (req, res) => {
+router.get('/check-access/:productId', async (req, res) => {
   try {
     const { productId } = req.params;
-    const userId = req.user.id;
+     const userId = req.user && req.user.id ? req.user.id : null;
 
     let product;
     if (productId && productId.match(/^[0-9a-fA-F]{24}$/)) {
